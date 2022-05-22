@@ -14,8 +14,7 @@ function createAudio() {
   div.innerHTML = `<audio
     id="a"
     preload="none"
-    type="audio/mpeg"
-    src="/data/2323.mp3">
+    src="data/seg-1-a1.ts">
       Your browser does not support the
       <code>audio</code> element.
   </audio>`
