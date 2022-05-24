@@ -1,4 +1,5 @@
 // @ts-check
+import Hls from "hls.js";
 const playerId = '#player';
 const player = document.querySelector(playerId);
 
@@ -14,7 +15,8 @@ function createAudio() {
   div.innerHTML = `<audio
     id="a"
     preload="none"
-    src="data/seg-1-a1.ts">
+    content-type="video/MP2T"
+    src="seg-1-a1.ts">
       Your browser does not support the
       <code>audio</code> element.
   </audio>`
@@ -27,11 +29,23 @@ window.onload = () => {
   }
   document.querySelector('#play').addEventListener('click', async () => {
     const audio = createAudio();
-    console.log(audio)
-    setTimeout(() => {
-      audio.play();
-    }, 0)
-  
+    if (!Hls.isSupported()) {
+      console.error('Hls decoder is not supported');
+      return;
+    }
+
+    var hls = new Hls();
+    // bind them together
+    hls.attachMedia(audio);
+    hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+      console.log('video and hls.js are now bound together !');
+      hls.loadSource('http://89.223.70.28/file.php?audio=-2001547492_108547492&action=play');
+      hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+        console.log(data);
+      });
+    });
+    audio.play();
+
     audio.onended = () => {
       console.log('ended');
     }
@@ -42,7 +56,7 @@ window.onload = () => {
       console.log(38, d)
     } 
     audio.ontimeupdate = (d) => {
-      console.log(41, d)
+      // console.log(41, d)
     } 
     audio.onvolumechange = (d) => {
       console.log(44, d)
